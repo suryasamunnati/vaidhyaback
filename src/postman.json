@@ -1,0 +1,1594 @@
+{
+    "info": {
+      "_postman_id": "e5f8c5b7-4a1b-4e7e-8a1d-1a9e6c0f5e8d",
+      "name": "Vaidhya API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": "Complete API collection for Vaidhya backend"
+    },
+    "variable": [
+      {
+        "key": "base_url",
+        "value": "http://localhost:5000/api",
+        "type": "string"
+      },
+      {
+        "key": "token",
+        "value": "",
+        "type": "string"
+      }
+    ],
+    "item": [
+      {
+        "name": "Authentication",
+        "item": [
+          {
+            "name": "Register",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"mobileNumber\": \"+919876543210\",\n    \"userType\": \"customer\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/auth/register",
+                "host": ["{{base_url}}"],
+                "path": ["auth", "register"]
+              },
+              "description": "Register a new user with mobile number and user type"
+            }
+          },
+          {
+            "name": "Verify OTP",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"mobileNumber\": \"+919876543210\",\n    \"otp\": \"123456\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/auth/verify-otp",
+                "host": ["{{base_url}}"],
+                "path": ["auth", "verify-otp"]
+              },
+              "description": "Verify OTP after registration"
+            }
+          },
+          {
+            "name": "Login",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"mobileNumber\": \"+919876543210\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/auth/login",
+                "host": ["{{base_url}}"],
+                "path": ["auth", "login"]
+              },
+              "description": "Login with mobile number"
+            }
+          },
+          {
+            "name": "Resend OTP",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"mobileNumber\": \"+919876543210\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/auth/resend-otp",
+                "host": ["{{base_url}}"],
+                "path": ["auth", "resend-otp"]
+              },
+              "description": "Resend OTP"
+            }
+          },
+          {
+            "name": "Get Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/auth/profile",
+                "host": ["{{base_url}}"],
+                "path": ["auth", "profile"]
+              },
+              "description": "Get user profile"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Doctor",
+        "item": [
+          {
+            "name": "Get Doctor Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/doctors/profile",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "profile"]
+              },
+              "description": "Get logged-in doctor's profile"
+            }
+          },
+          {
+            "name": "Get Doctor by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{base_url}}/doctors/profile/:id",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "profile", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "doctor_id_here"
+                  }
+                ]
+              },
+              "description": "Get doctor profile by ID (public)"
+            }
+          },
+          {
+            "name": "Update Doctor Profile",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Dr. John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"specialty\": \"Cardiology\",\n    \"qualifications\": \"MBBS, MD\",\n    \"experience\": 10,\n    \"bio\": \"Experienced cardiologist with 10 years of practice\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/profile",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "profile"]
+              },
+              "description": "Update doctor profile"
+            }
+          },
+          {
+            "name": "Update Availability",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"availability\": [\n        {\n            \"day\": \"Monday\",\n            \"slots\": [\n                {\n                    \"start\": \"09:00\",\n                    \"end\": \"12:00\"\n                },\n                {\n                    \"start\": \"14:00\",\n                    \"end\": \"17:00\"\n                }\n            ]\n        },\n        {\n            \"day\": \"Wednesday\",\n            \"slots\": [\n                {\n                    \"start\": \"09:00\",\n                    \"end\": \"12:00\"\n                }\n            ]\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/availability",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "availability"]
+              },
+              "description": "Update doctor availability"
+            }
+          },
+          {
+            "name": "Add Unavailable Period",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"startDate\": \"2023-12-24\",\n    \"endDate\": \"2023-12-26\",\n    \"reason\": \"Holiday\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/unavailable-period",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "unavailable-period"]
+              },
+              "description": "Add unavailable period"
+            }
+          },
+          {
+            "name": "Update Education",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"education\": [\n        {\n            \"degree\": \"MBBS\",\n            \"institution\": \"AIIMS\",\n            \"year\": 2010\n        },\n        {\n            \"degree\": \"MD\",\n            \"institution\": \"AIIMS\",\n            \"year\": 2014\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/education",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "education"]
+              },
+              "description": "Update education details"
+            }
+          },
+          {
+            "name": "Update Experience",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"experience\": [\n        {\n            \"position\": \"Resident Doctor\",\n            \"hospital\": \"City Hospital\",\n            \"startYear\": 2014,\n            \"endYear\": 2018\n        },\n        {\n            \"position\": \"Specialist\",\n            \"hospital\": \"Medical Center\",\n            \"startYear\": 2018,\n            \"endYear\": null\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/experience",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "experience"]
+              },
+              "description": "Update experience details"
+            }
+          },
+          {
+            "name": "Update Awards",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"awards\": [\n        {\n            \"title\": \"Best Doctor Award\",\n            \"year\": 2020,\n            \"organization\": \"Medical Association\"\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/awards",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "awards"]
+              },
+              "description": "Update awards and recognitions"
+            }
+          },
+          {
+            "name": "Update Clinics",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"clinics\": [\n        {\n            \"name\": \"City Clinic\",\n            \"address\": \"123 Main St\",\n            \"city\": \"Mumbai\",\n            \"state\": \"Maharashtra\",\n            \"postalCode\": \"400001\",\n            \"consultationFee\": 500\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/clinics",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "clinics"]
+              },
+              "description": "Update clinic information"
+            }
+          },
+          {
+            "name": "Update Consultation Types",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"consultationTypes\": [\n        {\n            \"type\": \"video\",\n            \"fee\": 800,\n            \"durationMinutes\": 15\n        },\n        {\n            \"type\": \"inClinic\",\n            \"fee\": 1000,\n            \"durationMinutes\": 30\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/consultation-types",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "consultation-types"]
+              },
+              "description": "Update consultation types"
+            }
+          },
+          {
+            "name": "Update Settings",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"settings\": {\n        \"notificationsEnabled\": true,\n        \"language\": \"en\",\n        \"darkModeEnabled\": false,\n        \"autoConfirmAppointments\": true\n    }\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/settings",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "settings"]
+              },
+              "description": "Update doctor settings"
+            }
+          },
+          {
+            "name": "Update Addresses",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"addresses\": [\n        {\n            \"type\": \"home\",\n            \"address\": \"456 Park Avenue\",\n            \"city\": \"Mumbai\",\n            \"state\": \"Maharashtra\",\n            \"postalCode\": \"400002\",\n            \"isDefault\": true\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/addresses",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "addresses"]
+              },
+              "description": "Update doctor addresses"
+            }
+          },
+          {
+            "name": "Upload Profile Photo",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "profilePhoto",
+                    "type": "file",
+                    "src": "/path/to/photo.jpg"
+                  }
+                ]
+              },
+              "url": {
+                "raw": "{{base_url}}/doctors/upload-photo",
+                "host": ["{{base_url}}"],
+                "path": ["doctors", "upload-photo"]
+              },
+              "description": "Upload profile photo"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Customer",
+        "item": [
+          {
+            "name": "Get Customer Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/customers/profile",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "profile"]
+              },
+              "description": "Get customer profile"
+            }
+          },
+          {
+            "name": "Update Customer Profile",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"dateOfBirth\": \"1990-01-01\",\n    \"gender\": \"male\",\n    \"bloodGroup\": \"O+\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/customers/profile",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "profile"]
+              },
+              "description": "Update customer profile"
+            }
+          },
+          {
+            "name": "Add Medical Record",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"title\": \"Blood Test\",\n    \"date\": \"2023-01-15\",\n    \"doctorName\": \"Dr. Smith\",\n    \"hospitalName\": \"City Hospital\",\n    \"description\": \"Routine blood test\",\n    \"documentUrl\": \"https://example.com/document.pdf\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/customers/medical-records",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "medical-records"]
+              },
+              "description": "Add medical record"
+            }
+          },
+          {
+            "name": "Update Medical Record",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"recordId\": \"record_id_here\",\n    \"title\": \"Updated Blood Test\",\n    \"date\": \"2023-01-15\",\n    \"doctorName\": \"Dr. Smith\",\n    \"hospitalName\": \"City Hospital\",\n    \"description\": \"Routine blood test with additional tests\",\n    \"documentUrl\": \"https://example.com/document.pdf\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/customers/medical-records",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "medical-records"]
+              },
+              "description": "Update medical record"
+            }
+          },
+          {
+            "name": "Delete Medical Record",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/customers/medical-records/:recordId",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "medical-records", ":recordId"],
+                "variable": [
+                  {
+                    "key": "recordId",
+                    "value": "record_id_here"
+                  }
+                ]
+              },
+              "description": "Delete medical record"
+            }
+          },
+          {
+            "name": "Add Medication",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Paracetamol\",\n    \"dosage\": \"500mg\",\n    \"frequency\": \"Twice daily\",\n    \"startDate\": \"2023-01-01\",\n    \"endDate\": \"2023-01-07\",\n    \"prescribedBy\": \"Dr. Smith\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/customers/medications",
+                "host": ["{{base_url}}"],
+                "path": ["customers", "medications"]
+              },
+              "description": "Add medication"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Hospital",
+        "item": [
+          {
+            "name": "Get Hospital Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/hospitals/profile",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "profile"]
+              },
+              "description": "Get hospital profile"
+            }
+          },
+          {
+            "name": "Get Hospital by ID",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{base_url}}/hospitals/profile/:id",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "profile", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "hospital_id_here"
+                  }
+                ]
+              },
+              "description": "Get hospital profile by ID (public)"
+            }
+          },
+          {
+            "name": "Update Hospital Profile",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"City Hospital\",\n    \"email\": \"info@cityhospital.com\",\n    \"phone\": \"+919876543210\",\n    \"address\": \"123 Main St\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"postalCode\": \"400001\",\n    \"website\": \"https://cityhospital.com\",\n    \"description\": \"Leading hospital in the city\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/hospitals/profile",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "profile"]
+              },
+              "description": "Update hospital profile"
+            }
+          },
+          {
+            "name": "Update Facilities",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"facilities\": [\n        \"ICU\",\n        \"Emergency\",\n        \"Radiology\",\n        \"Laboratory\"\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/hospitals/facilities",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "facilities"]
+              },
+              "description": "Update hospital facilities"
+            }
+          },
+          {
+            "name": "Update Services",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"services\": [\n        {\n            \"name\": \"X-Ray\",\n            \"description\": \"Digital X-Ray services\",\n            \"price\": 1000\n        },\n        {\n            \"name\": \"MRI\",\n            \"description\": \"Magnetic Resonance Imaging\",\n            \"price\": 5000\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/hospitals/services",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "services"]
+              },
+              "description": "Update hospital services"
+            }
+          },
+          {
+            "name": "Update Specialties",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"specialties\": [\n        \"Cardiology\",\n        \"Neurology\",\n        \"Orthopedics\",\n        \"Pediatrics\"\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/hospitals/specialties",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "specialties"]
+              },
+              "description": "Update hospital specialties"
+            }
+          },
+          {
+            "name": "Add Doctor",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"doctorId\": \"doctor_id_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/hospitals/doctors",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "doctors"]
+              },
+              "description": "Add doctor to hospital"
+            }
+          },
+          {
+            "name": "Remove Doctor",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/hospitals/doctors/:doctorId",
+                "host": ["{{base_url}}"],
+                "path": ["hospitals", "doctors", ":doctorId"],
+                "variable": [
+                  {
+                    "key": "doctorId",
+                    "value": "doctor_id_here"
+                  }
+                ]
+              },
+              "description": "Remove doctor from hospital"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Vendor",
+        "item": [
+          {
+            "name": "Get Vendor Profile",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/vendors/profile",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "profile"]
+              },
+              "description": "Get vendor profile"
+            }
+          },
+          {
+            "name": "Update Vendor Profile",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"Health Services\",\n    \"email\": \"info@healthservices.com\",\n    \"mobileNumber\": \"+919876543210\",\n    \"address\": \"123 Main St\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"postalCode\": \"400001\",\n    \"website\": \"https://healthservices.com\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/profile",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "profile"]
+              },
+              "description": "Update vendor profile"
+            }
+          },
+          {
+            "name": "Upload Profile Image",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "image",
+                    "type": "file",
+                    "src": "/path/to/image.jpg"
+                  }
+                ]
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/profile/image",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "profile", "image"]
+              },
+              "description": "Upload profile image"
+            }
+          },
+          {
+            "name": "Update Service Types",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"serviceTypes\": [\n        \"Home Care\",\n        \"Nursing\",\n        \"Physiotherapy\"\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/service-types",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "service-types"]
+              },
+              "description": "Update service types"
+            }
+          },
+          {
+            "name": "Add/Update Service",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"id\": \"service_id_here\",\n    \"name\": \"Home Nursing\",\n    \"description\": \"Professional nursing care at home\",\n    \"price\": 1000,\n    \"currency\": \"INR\",\n    \"durationMinutes\": 60,\n    \"iconCode\": \"nursing_icon\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/services",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "services"]
+              },
+              "description": "Add or update service"
+            }
+          },
+          {
+            "name": "Delete Service",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/vendors/services/:serviceId",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "services", ":serviceId"],
+                "variable": [
+                  {
+                    "key": "serviceId",
+                    "value": "service_id_here"
+                  }
+                ]
+              },
+              "description": "Delete service"
+            }
+          },
+          {
+            "name": "Upload Images",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "images",
+                    "type": "file",
+                    "src": "/path/to/image1.jpg"
+                  },
+                  {
+                    "key": "images",
+                    "type": "file",
+                    "src": "/path/to/image2.jpg"
+                  }
+                ]
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/images",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "images"]
+              },
+              "description": "Upload service images"
+            }
+          },
+          {
+            "name": "Delete Image",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"imageUrl\": \"https://res.cloudinary.com/example/image.jpg\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/images",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "images"]
+              },
+              "description": "Delete image"
+            }
+          },
+          {
+            "name": "Update Available Slots",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"availableSlots\": [\n        {\n            \"day\": \"Monday\",\n            \"slots\": [\n                {\n                    \"start\": \"09:00\",\n                    \"end\": \"17:00\"\n                }\n            ]\n        },\n        {\n            \"day\": \"Tuesday\",\n            \"slots\": [\n                {\n                    \"start\": \"09:00\",\n                    \"end\": \"17:00\"\n                }\n            ]\n        }\n    ]\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/available-slots",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "available-slots"]
+              },
+              "description": "Update available slots"
+            }
+          },
+          {
+            "name": "Toggle Availability",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"isAvailableNow\": true\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/vendors/availability",
+                "host": ["{{base_url}}"],
+                "path": ["vendors", "availability"]
+              },
+              "description": "Toggle availability status"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Appointment",
+        "item": [
+          {
+            "name": "Book Doctor Appointment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"doctorId\": \"doctor_id_here\",\n    \"appointmentType\": \"video\",\n    \"date\": \"2023-12-15\",\n    \"slot\": \"10:00-10:15\",\n    \"notes\": \"Regular checkup\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/appointments/book/doctor",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "book", "doctor"]
+              },
+              "description": "Book doctor appointment"
+            }
+          },
+          {
+            "name": "Book Hospital Appointment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"hospitalId\": \"hospital_id_here\",\n    \"department\": \"Cardiology\",\n    \"service\": \"ECG\",\n    \"date\": \"2023-12-15\",\n    \"slot\": \"11:00-11:30\",\n    \"notes\": \"Regular checkup\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/appointments/book/hospital",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "book", "hospital"]
+              },
+              "description": "Book hospital appointment"
+            }
+          },
+          {
+            "name": "Book Service Appointment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"vendorId\": \"vendor_id_here\",\n    \"serviceType\": \"Home Care\",\n    \"serviceName\": \"Home Nursing\",\n    \"date\": \"2023-12-15\",\n    \"slot\": \"14:00-15:00\",\n    \"address\": {\n        \"address\": \"456 Park Avenue\",\n        \"city\": \"Mumbai\",\n        \"state\": \"Maharashtra\",\n        \"postalCode\": \"400002\"\n    },\n    \"notes\": \"Elderly care\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/appointments/book/service",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "book", "service"]
+              },
+              "description": "Book service appointment"
+            }
+          },
+          {
+            "name": "Verify Appointment Payment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"appointmentId\": \"appointment_id_here\",\n    \"razorpayPaymentId\": \"pay_123456789\",\n    \"razorpayOrderId\": \"order_123456789\",\n    \"razorpaySignature\": \"signature_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/appointments/verify-payment",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "verify-payment"]
+              },
+              "description": "Verify appointment payment"
+            }
+          },
+          {
+            "name": "Get Customer Appointments",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/appointments/customer",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "customer"]
+              },
+              "description": "Get customer's appointments"
+            }
+          },
+          {
+            "name": "Get Provider Appointments",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/appointments/provider",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "provider"]
+              },
+              "description": "Get provider's appointments"
+            }
+          },
+          {
+            "name": "Respond to Appointment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"appointmentId\": \"appointment_id_here\",\n    \"action\": \"accept\",\n    \"rejectionReason\": null\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/appointments/respond",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "respond"]
+              },
+              "description": "Respond to appointment request"
+            }
+          },
+          {
+            "name": "Cancel Appointment",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/appointments/cancel/:appointmentId",
+                "host": ["{{base_url}}"],
+                "path": ["appointments", "cancel", ":appointmentId"],
+                "variable": [
+                  {
+                    "key": "appointmentId",
+                    "value": "appointment_id_here"
+                  }
+                ]
+              },
+              "description": "Cancel appointment"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Payment",
+        "item": [
+          {
+            "name": "Create Payment Order",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"amount\": 1000,\n    \"currency\": \"INR\",\n    \"receipt\": \"order_receipt_123\",\n    \"notes\": {\n        \"purpose\": \"subscription\"\n    }\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/payments/create-order",
+                "host": ["{{base_url}}"],
+                "path": ["payments", "create-order"]
+              },
+              "description": "Create payment order"
+            }
+          },
+          {
+            "name": "Verify Payment",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"razorpay_order_id\": \"order_id_here\",\n    \"razorpay_payment_id\": \"payment_id_here\",\n    \"razorpay_signature\": \"signature_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/payments/verify",
+                "host": ["{{base_url}}"],
+                "path": ["payments", "verify"]
+              },
+              "description": "Verify payment"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Transaction",
+        "item": [
+          {
+            "name": "Get Doctor Earnings",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/transactions/earnings",
+                "host": ["{{base_url}}"],
+                "path": ["transactions", "earnings"]
+              },
+              "description": "Get doctor earnings"
+            }
+          },
+          {
+            "name": "Request Payout",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"amount\": 5000\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/transactions/payout/request",
+                "host": ["{{base_url}}"],
+                "path": ["transactions", "payout", "request"]
+              },
+              "description": "Request payout"
+            }
+          },
+          {
+            "name": "Get Payout History",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/transactions/payout/history",
+                "host": ["{{base_url}}"],
+                "path": ["transactions", "payout", "history"]
+              },
+              "description": "Get payout history"
+            }
+          },
+          {
+            "name": "Update Bank Details",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"accountNumber\": \"1234567890\",\n    \"ifscCode\": \"ABCD0001234\",\n    \"accountHolderName\": \"John Doe\",\n    \"bankName\": \"Example Bank\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/transactions/bank-details",
+                "host": ["{{base_url}}"],
+                "path": ["transactions", "bank-details"]
+              },
+              "description": "Update bank details"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Video Call",
+        "item": [
+          {
+            "name": "Initialize Call",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"appointmentId\": \"appointment_id_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/video-calls/initialize",
+                "host": ["{{base_url}}"],
+                "path": ["video-calls", "initialize"]
+              },
+              "description": "Initialize video call"
+            }
+          },
+          {
+            "name": "Start Call",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"appointmentId\": \"appointment_id_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/video-calls/start",
+                "host": ["{{base_url}}"],
+                "path": ["video-calls", "start"]
+              },
+              "description": "Start video call"
+            }
+          },
+          {
+            "name": "End Call",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"appointmentId\": \"appointment_id_here\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/video-calls/end",
+                "host": ["{{base_url}}"],
+                "path": ["video-calls", "end"]
+              },
+              "description": "End video call"
+            }
+          }
+        ]
+      }
+    ]
+  }
+
+              
