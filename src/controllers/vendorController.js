@@ -586,6 +586,188 @@ const addPaymentMethod = async (req, res) => {
   }
 };
 
+// Get nearby vendors based on latitude and longitude
+const getNearbyVendors = async (req, res) => {
+  try {
+    const { latitude, longitude, radius = 10, limit = 20, serviceType, page = 1 } = req.query;
+    
+    // Validate required parameters
+    if (!latitude || !longitude) {
+      return res.status(400).json({ 
+        message: 'Latitude and longitude are required' 
+      });
+    }
+    
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    const radiusInKm = parseFloat(radius);
+    const limitNum = parseInt(limit);
+    const pageNum = parseInt(page);
+    const skip = (pageNum - 1) * limitNum;
+    
+    // Build query for active vendors
+    let query = {
+      role: 'vendor',
+      latitude: { $exists: true, $ne: null },
+      longitude: { $exists: true, $ne: null }
+    };
+    
+    // Add service type filter if provided
+    if (serviceType && serviceType !== 'all') {
+      query.serviceTypes = { $in: [new RegExp(serviceType, 'i')] };
+    }
+    
+    // Find vendors with geospatial query
+    const vendors = await Vendor.aggregate([
+      {
+        $match: query
+      },
+      {
+        $addFields: {
+          distance: {
+            $multiply: [
+              6371, // Earth's radius in kilometers
+              {
+                $acos: {
+                  $add: [
+                    {
+                      $multiply: [
+                        { $sin: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $sin: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } }
+                      ]
+                    },
+                    {
+                      $multiply: [
+                        { $cos: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: [{ $subtract: ['$longitude', lng] }, 180] }, Math.PI] } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          distance: { $lte: radiusInKm },
+          latitude: { $ne: null },
+          longitude: { $ne: null }
+        }
+      },
+      {
+        $sort: { distance: 1, rating: -1 }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limitNum
+      },
+      {
+        $project: {
+          id: '$_id',
+          name: 1,
+          email: 1,
+          phone_number: '$mobileNumber',
+          user_type: '$role',
+          rating: { $ifNull: ['$rating', 0] },
+          review_count: { $ifNull: ['$reviewCount', 0] },
+          address: 1,
+          city: 1,
+          state: 1,
+          postal_code: '$postalCode',
+          latitude: 1,
+          longitude: 1,
+          website: 1,
+          service_types: '$serviceTypes',
+          services: 1,
+          images: 1,
+          is_available_now: '$isAvailableNow',
+          available_slots: '$availableSlots',
+          distance: { $round: ['$distance', 2] },
+          created_at: '$createdAt',
+          updated_at: '$updatedAt'
+        }
+      }
+    ]);
+    
+    // Get total count
+    const totalCount = await Vendor.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          distance: {
+            $multiply: [
+              6371,
+              {
+                $acos: {
+                  $add: [
+                    {
+                      $multiply: [
+                        { $sin: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $sin: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } }
+                      ]
+                    },
+                    {
+                      $multiply: [
+                        { $cos: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: [{ $subtract: ['$longitude', lng] }, 180] }, Math.PI] } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          distance: { $lte: radiusInKm },
+          latitude: { $ne: null },
+          longitude: { $ne: null }
+        }
+      },
+      { $count: 'total' }
+    ]);
+    
+    const total = totalCount.length > 0 ? totalCount[0].total : 0;
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        vendors,
+        pagination: {
+          total,
+          page: pageNum,
+          limit: limitNum,
+          pages: Math.ceil(total / limitNum),
+          hasNext: pageNum < Math.ceil(total / limitNum),
+          hasPrev: pageNum > 1
+        },
+        searchParams: {
+          latitude: lat,
+          longitude: lng,
+          radius: radiusInKm,
+          serviceType: serviceType || 'all'
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get nearby vendors error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to get nearby vendors', 
+      error: error.message 
+    });
+  }
+};
+
 module.exports = {
   getVendorProfile,
   updateVendorProfile,
@@ -600,5 +782,6 @@ module.exports = {
   addAddress,
   updateAddress,
   deleteAddress,
-  addPaymentMethod
+  addPaymentMethod,
+  getNearbyVendors,
 };

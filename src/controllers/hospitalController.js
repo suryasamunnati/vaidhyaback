@@ -1,5 +1,6 @@
 const { Hospital } = require('../models/User');
 const { cloudinary } = require('../utils/cloudinaryConfig');
+const { mapGooglePlaceToAddress } = require('../utils/addressUtil');
 
 // Get hospital profile with all details
 const getHospitalProfile = async (req, res) => {
@@ -492,6 +493,196 @@ const removeDoctor = async (req, res) => {
     res.status(500).json({ message: 'Failed to remove doctor', error: error.message });
   }
 };
+const getNearbyHospitals = async (req, res) => {
+  try {
+    const { latitude, longitude, radius = 10, limit = 20, type, specialty, page = 1 } = req.query;
+    
+    // Validate required parameters
+    if (!latitude || !longitude) {
+      return res.status(400).json({ 
+        message: 'Latitude and longitude are required' 
+      });
+    }
+    
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    const radiusInKm = parseFloat(radius);
+    const limitNum = parseInt(limit);
+    const pageNum = parseInt(page);
+    const skip = (pageNum - 1) * limitNum;
+    
+    // Build query for active hospitals
+    let query = {
+      role: 'hospital',
+      latitude: { $exists: true, $ne: null },
+      longitude: { $exists: true, $ne: null }
+    };
+    
+    // Add type filter if provided
+    if (type && type !== 'all') {
+      query.type = { $regex: type, $options: 'i' };
+    }
+    
+    // Add specialty filter if provided
+    if (specialty && specialty !== 'all') {
+      query.specialties = { $in: [new RegExp(specialty, 'i')] };
+    }
+    
+    // Find hospitals with geospatial query
+    const hospitals = await Hospital.aggregate([
+      {
+        $match: query
+      },
+      {
+        $addFields: {
+          distance: {
+            $multiply: [
+              6371, // Earth's radius in kilometers
+              {
+                $acos: {
+                  $add: [
+                    {
+                      $multiply: [
+                        { $sin: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $sin: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } }
+                      ]
+                    },
+                    {
+                      $multiply: [
+                        { $cos: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: [{ $subtract: ['$longitude', lng] }, 180] }, Math.PI] } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          distance: { $lte: radiusInKm },
+          latitude: { $ne: null },
+          longitude: { $ne: null }
+        }
+      },
+      {
+        $sort: { distance: 1, rating: -1 }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limitNum
+      },
+      {
+        $project: {
+          id: '$_id',
+          name: 1,
+          email: 1,
+          phone_number: '$mobileNumber',
+          user_type: '$role',
+          type: 1,
+          rating: { $ifNull: ['$rating', 0] },
+          review_count: { $ifNull: ['$reviewCount', 0] },
+          address: 1,
+          city: 1,
+          state: 1,
+          postal_code: '$postalCode',
+          latitude: 1,
+          longitude: 1,
+          website: 1,
+          bed_count: '$bedCount',
+          doctor_count: '$doctorCount',
+          facilities: 1,
+          services: 1,
+          specialties: 1,
+          insurance_accepted: '$insuranceAccepted',
+          images: 1,
+          is_open_24x7: '$isOpen24x7',
+          distance: { $round: ['$distance', 2] },
+          created_at: '$createdAt',
+          updated_at: '$updatedAt'
+        }
+      }
+    ]);
+    
+    // Get total count
+    const totalCount = await Hospital.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          distance: {
+            $multiply: [
+              6371,
+              {
+                $acos: {
+                  $add: [
+                    {
+                      $multiply: [
+                        { $sin: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $sin: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } }
+                      ]
+                    },
+                    {
+                      $multiply: [
+                        { $cos: { $multiply: [{ $divide: [lat, 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: ['$latitude', 180] }, Math.PI] } },
+                        { $cos: { $multiply: [{ $divide: [{ $subtract: ['$longitude', lng] }, 180] }, Math.PI] } }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        $match: {
+          distance: { $lte: radiusInKm },
+          latitude: { $ne: null },
+          longitude: { $ne: null }
+        }
+      },
+      { $count: 'total' }
+    ]);
+    
+    const total = totalCount.length > 0 ? totalCount[0].total : 0;
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        hospitals,
+        pagination: {
+          total,
+          page: pageNum,
+          limit: limitNum,
+          pages: Math.ceil(total / limitNum),
+          hasNext: pageNum < Math.ceil(total / limitNum),
+          hasPrev: pageNum > 1
+        },
+        searchParams: {
+          latitude: lat,
+          longitude: lng,
+          radius: radiusInKm,
+          type: type || 'all',
+          specialty: specialty || 'all'
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Get nearby hospitals error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to get nearby hospitals', 
+      error: error.message 
+    });
+  }
+};
 
 module.exports = {
   getHospitalProfile,
@@ -506,8 +697,10 @@ module.exports = {
   updatePaymentMethods,
   updateSettings,
   addDoctor,
-  removeDoctor
+  removeDoctor,
+  getNearbyHospitals
 };
 
 // Import the utility function
-const { mapGooglePlaceToAddress } = require('../utils/addressUtil');
+
+// Get nearby hospitals based on latitude and longitude

@@ -62,4 +62,9 @@ router.delete('/addresses/:id', auth, requireSubscription, deleteAddress);
 // Add payment method - requires subscription
 router.post('/payment-methods', auth, requireSubscription, addPaymentMethod);
 
+// Import the function
+const { getNearbyVendors } = require('../controllers/vendorController');
+
+// Add the route
+router.get('/nearby', getNearbyVendors);
 module.exports = router;

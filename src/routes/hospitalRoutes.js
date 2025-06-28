@@ -41,4 +41,9 @@ router.delete('/doctors/:doctorId', auth, removeDoctor);
 // File upload route
 router.post('/upload-photo', auth, upload.single('profilePhoto'), uploadProfilePhoto);
 
+// Import the function
+const { getNearbyHospitals } = require('../controllers/hospitalController');
+
+// Add the route
+router.get('/nearby', getNearbyHospitals);
 module.exports = router;
